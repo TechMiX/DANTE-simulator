@@ -1,0 +1,67 @@
+===============
+DANTE simulator
+===============
+
+Here is included the simulation software used to test DANTE. DANTE is a proposal
+of a self-adapting P2P system, already introduced in some research papers (*).
+All the results shown in those papers were obtained using this simulator.
+
+This software is released under the GPL v2.0 distribution license (see the
+LICENSE file).
+
+More info: https://sites.google.com/site/luisroderomerinowebpage/research#thesis
+
+Contents:
+src/
+ Java source files.
+bin/
+ Compiled software.
+dante_all_experiments_configuration
+ Simulations configuration file.
+LICENSE
+ GPL license.
+README
+ This file.
+
+
+To start running the simulations, run this command (make sure that the 'bin/' 
+dir is in your CLASSPATH):
+$ java es.ladyr.dante.run.DanteAllSimsRunner
+
+To see command line options, type:
+$ java es.ladyr.dante.run.DanteAllSimsRunner --help
+
+
+Notes about the simulations configuration:
+
+It is possible to run more than one simulation using the same configuration
+file. For example, if we wish to run simulations to test two different
+resource replication rates (say 0.01 and 0.05) and two different loads (say 5
+and 2.5 seconds between each search) we would set the 'UniformReplicationRate'
+parameter to:
+UniformReplicationRate = 0.01;0.05
+and the 'TimeBetweenSearches' parameter to:
+TimeBetweenSearches = 500000;250000
+
+Note the ';' used to separate values.
+
+Four simulations will be run, each with a different combination of parameter
+values. Results will be stored in different files for each experiment. For
+example, the resulting files for the second simulation would be (note the '2' at
+the end of each file):
+./DANTEResults_SearchesStatsByNode_2
+./DANTEResults_SearchesStats_2
+./DANTEResults_AllSearchesDigestedLog_2
+
+Captures of the network topology are saved in different files (using the PAJEK
+format). These would be stored in directory:
+./DANTEResults_PajekCapturedNets_2/
+
+Finally another file ./DANTEParams_2 will be also created, to store the specific
+configuration used in that experiment.
+
+(*) "A Topology Self-Adaptation Mechanism for Efficient Resource Location"
+Luis Rodero-Merino, Antonio Fernández Anta, Luis López, Vicent Cholvi.
+International Symposium on Parallel and Distributed Processing and Applications (ISPA 2006).
+Lecture Notes in Computer Science, ISBN: 3-540-68067-5. Volume 4330, pp. 660-671.
+

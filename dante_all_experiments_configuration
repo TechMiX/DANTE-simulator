@@ -1,0 +1,240 @@
+###########################
+## Simulator level configuration parameters
+###########################
+SimBeParanoid = FALSE
+ProgressMark = 10000000
+
+###########################
+## Net level configuration parameters
+###########################
+# Delay in links. For DANTE we leave this to 0, as time in transmissions is
+# already computed using the nodes' bandwidths.
+LinkDelay = 0
+NetBeParanoid = FALSE
+
+###########################
+## DANTE configuration parameters
+###########################
+
+## Initial Topology
+InitialTopologyGenerator = es.ladyr.dante.topologyGenerator.RandomTopologyGenerator
+
+## At each reconnection, a list of peer candidates must be collected. This flag
+# sets if the candidates are collected by a message following a random walk. If
+# false, then all nodes in the network are candidates (global knowledge).
+NodeSearchByWalkers = TRUE
+
+## DANTE packets size (bits)
+DantePacketsMaxSize = 1000
+
+## Messages TTLs
+SearchesTTL = 1000       
+NodeSearchesTTL = 30
+# Leave this as it is.
+ResourceSearchesTTLEstimator = es.ladyr.dante.node.ttl.FixedTTLStimator
+
+## Number of resources held by each node. All resources are different.
+ResourcesByNode = 100
+
+# Resources popularity is uniform? (if not, is zipf)
+ResourcesPopularityIsUniform = TRUE
+
+# Resource popularity parameters (used if resources popularity not 
+# uniform, that is, Zipf)
+ResourcesPopularityTau = 0.5
+ResourcesPopularityCutoff = 20000
+
+# Resources replication  is uniform? (if not, is Zipf)
+ResourcesReplicationIsUniform = TRUE
+# Rate of resources replication (%), (how many nodes host each resource).
+# Ignored if ResourcesReplicationIsUniform = false
+#> UniformReplicationRate = 0.01;0.05;0.1
+UniformReplicationRate = 1
+
+# Resource replication parameters (used if resources replication is not 
+# uniform, that is, is Zipf)
+ResourcesReplicationTau = 1.5
+ResourcesReplicationCutoff = 20000
+
+
+## Nodes
+# Nodes configurations, separated by ','. Each configuration has three 
+# components [a|b|c]. 
+# For example [500|1000|10],[700|10000|100]: this means 500 nodes have a 
+# processing capacity of 1000 resources by node and a bandwidth of 10 
+# bits/unit_of_time, and 700 nodes have a processing capacity of
+# 10000 resources by node and a bandwidth of 100 bits/unit_of_time
+# a -> number of nodes with a processing capacity of 'b' and a bandwidth of 'c'
+# b -> resources by unit of time that can be compared by 'a' nodes
+# c -> bandwidth of 'a' nodes
+# The sum of all a's is the total number of nodes in the system
+#> NodesNumbersCapacitiesAndBandwidths = [10|1000|100],[490|100|10],[3000|10|1],[4500|1|0.1],[2000|0.1|0.01]
+
+NodesNumbersCapacitiesAndBandwidths = [100|10|10]
+
+# Searches processing time is computed by exp distribution (mean=resourcesKnown/capacity)
+# If not, processing time is computed as resourcesChecked/capacity.
+ProcTimeByExpDistr = FALSE
+
+# Probability node is active at start time. If = 1, then all nodes will be
+# active (that is, will be present in the network) when the simulation is
+# started.
+ProbabilityNodeActiveAtStartTime = 1
+
+# Queues max size. If <= 0, then no limit is imposed
+QueuesMaxSize = -1
+
+## Congestion computation. These params are left here for historical reasons,
+# but are not used by present DANTE metrics calculator.
+# Time units used to compute congestion, query arrival rate, and query 
+# processing rate
+TimeUnitsForCongestion = 5000000
+# When threshold is fixed for all nodes. One node is congested if the
+# number of petitions received n last time unit >= CongestionThreshold.
+# This parameter is used by the  
+# es.ladyr.dante.node.kernel.metricsCalculator.FixedNodes metric
+# calculator module. Ignored if it any other module is used.
+CongestionThreshold = 100
+
+# For efficiency reasons, petitions are counted using 'slots' of time.
+# This param sets the length of each slot. 
+PetsCounterSlotLength = 500000
+
+## Node metric computation parameters. 
+# Normally that metric is only computed when using the 
+# AdaptableNodesMetricCalculator module
+# Variable threshold, depending of petitions arrival and
+# processing rates. Some node is congested if its rate of
+# petitions processing (multiplied by the congestion acceptance
+# rate) is lesser than the petitions arrival rate.
+CongestionAcceptanceRate = 0.7
+
+## Parameters for the AdaptableNodesMetricCalculator
+# Alpha. If Alpha = 0.0, it is like using the 'old' Adaptable Kernel
+Alpha = 1
+# Max Exponent
+MaxExponent = 2
+
+## Native connections handled by each node
+NumberOutgoingConnections = 10
+## Number of native connections changed at each reconnection.
+NumberConsChangedAtReconn = 5
+
+## Components. Leave them as they are.
+ConnectionsAccepter = es.ladyr.dante.node.connectionsAccepter.DefaultConnectionsAccepter
+ForwardNodeChooser = es.ladyr.dante.node.forwardNodeChooser.DefaultForwardNodeChooser
+ForwardSearchNodeChooser = es.ladyr.dante.node.forwardNodeChooser.DefaultForwardNodeChooser
+DanteKernel = es.ladyr.dante.node.kernel.DefaultDanteKernel
+NodesMetricCalculator = es.ladyr.dante.node.kernel.metricsCalculator.AdaptableNormalizedNodesMetricCalculator
+NodeToDiscFromChooser = es.ladyr.dante.node.kernel.disconnectionNodeChooser.RandomChooser
+NewConnectionsFilter = es.ladyr.dante.node.kernel.newConnectionsFilter.AlwaysConnectFilter
+
+
+## Periodic tasks (searches, topology captures, re-connections, activations and de-activations)
+
+## Topology captures.
+# First capture will be done at this point. If < 0 then no captures will be
+# done.
+FirstTopologyCaptureTime = 300000000
+TimeBetweenTopologyCaptures = 600000000
+## Load generated by searches.
+# Average time between searches started by each node.
+TimeBetweenSearches = 5000000;2500000
+# Load modifier intervals. Given by two values [a|b]. First value 'a' sets the
+# time point where the modification is used. Second value 'b' sets the
+# modification rate on the global load. 
+# If empty, the load is kept constant all the time. Example of experiment where
+# three different loads are used:
+#LoadModifierIntervals = [1|1.0],[100|0.5],[10000000|1.5]
+LoadModifierIntervals =
+# A negative value in FirstSearchTime means that no search will be done.
+FirstSearchTime = 10000000
+# Each node runs the reconnection process periodically. This param sets the
+# time between reconnections.
+TimeBetweenReconnections = 30000000
+# Time at which each node will run it first reconnection. If < 0 then no
+# reconnections will be performed.
+FirstReconnectionTime = 3000000
+# No more reconnections after this time. If <0 then this param is ignored.
+StopReconnectionsAfter = -1
+# Capture the degrees distribution?.
+CaptureDegreeDistribution = TRUE
+
+## Active times configurations. Nodes can leave and enter the network by their
+## own. These params simulate that behavior. Neighbors of nodes that leave the
+## network will redo their connections pointing to other peers chosen at
+## random.
+# Mean time nodes remain active. Negative values mean they never
+# leave the network.
+#ActivationMean = 60000000;300000000;600000000;3000000000;6000000000
+ActivationMean = -1
+# Mean time nodes remain unactive. Negative values mean they never
+# re-enter the network (unless 'DeactivationFixedTime' is set).
+DeactivationMean = -1
+# Fixed time nodes reamain unactive. Only used if 'DeactivationMean' < 0. If
+# this param also < 0, then it is ignored.
+DeactivationFixedTime = 500000
+
+## Attacks configuration. Used to simulate attacks on nodes of the network. When
+## one node is attacked, it will leave the network, discarding all searches in
+## its queue (they will be counted as DISCARTED in stats file). Neighbors of
+## attacked nodes will redo their connections pointing to other peers chosen at
+## random.
+# Time first attack will be performed. If <0, then no attack will be run.
+FirstAttackTime = -1
+# Time between attacks.
+TimeBetweenAttacks = 100000000
+# Number of nodes to leave the network.
+NumberOfNodesToAttack = 5
+# When this time has passed, the attacked nodes will return to the network.
+TimeBeforeNodesRecover = 100000000
+# When this time has passed, the network state will be saved.
+TimeNetworkCaptureAfterAttack = 10000000
+
+FixedTimeCost = 0
+
+## Used by external software to be notified about network events.
+GenerateEvents = FALSE
+
+## Directory where topology captures are saved (dir name header).
+PajekFilesDir = ./DANTEResults_PajekCapturedNets
+
+## Paranoid checkings on?
+DanteBeParanoid = FALSE
+
+## Searches logs
+# All searches log file name header (1 line per finished search)
+AllSearchesLog = ./DANTEResults_AllSearchesLog
+# Searches logs grouped by time intervals (log file name header).
+AllSearchesDigestedLog = ./DANTEResults_AllSearchesDigestedLog
+# Interval length for digested searches log. If set to 60000000, each interval
+# will be of one minute length.
+DigestedLogIntervalLength = 60000000
+
+##################################
+## Simulation configuration params
+##################################
+# Simulation will be forced to stop at this point.
+SimulationDuration = 10800000000
+# Searches started before this moment will not be used for statistics. They
+# will only appear as 'IGNORED' in stats file. Ignored if < 0.
+IgnoreBefore = 1800000000
+# Searches started beyond this point will be ignored for statistics. Besides,
+# when all simulations started before this poing are finished, the simulations
+# is assumed to be finished and so it is stopped (whatever the
+# 'SimulationDuration' param says). Ignored if < 0.
+IgnoreBeyond = 3600000000 
+# Limit of searches to run. When all those searches are finished, the simulation
+# is forced to stop. Ignored if <= 0.
+SearchesToRun = -1
+
+## Stats results files names headers.
+# Searches stats.
+StatsFileName = ./DANTEResults_SearchesStats
+# Searches stats grouped by node.
+StatsByNodeFileName = ./DANTEResults_SearchesStatsByNode
+
+## File to save each experiment params (name header). This file
+# will help to know what was the configuration of each simulation
+# after all exps are executed. 
+ConfigStoreFileName = ./DANTEParams
