@@ -87,7 +87,7 @@ public class ZipfDistribution {
     
         // Compute distribution (distribution[index] corresponds to P(index+1), where P(k) = 1 / (k^tau)  )
         //distribution[0] = 1.0;
-        for(int index = 0; index < distribution.length; index++){
+        for(int index = 1; index < distribution.length; index++){
             distribution[index] = 1.0 / Math.pow((double)index + minCutoff, tau);  // 1 / (k^tau)
             zeta += distribution[index];
             //System.out.println(distribution[index] + " " + zeta);
