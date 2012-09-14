@@ -23,7 +23,7 @@
  * Phone: +34 91 488 8107; Fax: +34 91 +34 91 664 7494
  * Postal address: Desp. 121, Departamental II,
  *                 Universidad Rey Juan Carlos
- *                 C/Tulipán s/n, 28933, Móstoles, Spain 
+ *                 C/TulipÃ¡n s/n, 28933, MÃ³stoles, Spain 
  *       
  */
 
@@ -31,12 +31,16 @@ package es.ladyr.dante.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
 
 import es.ladyr.dante.externalEvents.EventForwarder;
 import es.ladyr.dante.monitoring.searchesStats.NodeSearchesStats;
 import es.ladyr.dante.protocol.AcceptMessage;
 import es.ladyr.dante.protocol.ConnectMessage;
+import es.ladyr.dante.protocol.ReplicationMessage;
 import es.ladyr.dante.protocol.ProtocolMessage;
 import es.ladyr.dante.protocol.DisconnectMessage;
 import es.ladyr.dante.protocol.LookForNodeMessage;
@@ -281,7 +285,7 @@ public class DanteNode extends Node {
     
     // New search for resource started locally  
     public void lookForResource(int resource){
-        
+
         // Is node active??
         if(!nodeIsActive){            
             looksIgnoredBecauseNodeNotActive++;            
@@ -303,7 +307,7 @@ public class DanteNode extends Node {
     }
     
     public void processLocalSearch(int searchID, int resource){
-        
+    	
         if(busyUntil > Simulator.simulator().getSimulationTime()){
             throw new Error(id() + ": In processLocalSearch(), busyUntil " + busyUntil + " is greater than simulationTime " + Simulator.simulator().getSimulationTime());
         }
@@ -333,8 +337,7 @@ public class DanteNode extends Node {
                 // Programming TaskFinished event
                 Simulator.simulator().registerEvent(new NodeTaskFinishedEvent(busyUntil, this));
                                 
-                searchesStats.searchFinished(searchID, busyUntil, 0, false); 
-                
+                searchesStats.searchFinished(searchID, busyUntil, 0, false);
                 return;
             } 
 
@@ -351,7 +354,7 @@ public class DanteNode extends Node {
                                                                                        resource, 
                                                                                        DanteConf.getPresentSimConf().ttlEstimator().ttl(this), // instead of DNTConfiguration.getSearchsTTL()
                                                                                        this); // <- search origin
-            
+
             sendMessageToNode(busyUntil, nodeToForwardTo, lookForResourceMessage); // -> inherited from node
             
         } else {
@@ -361,7 +364,7 @@ public class DanteNode extends Node {
             
             // Programming TaskFinished event
             Simulator.simulator().registerEvent(new NodeTaskFinishedEvent(busyUntil, this));
-
+			
             searchesStats.searchFinished(searchID, busyUntil, 0, true);
             
         }     
@@ -370,7 +373,7 @@ public class DanteNode extends Node {
     
     // Check if resource is known
     protected ResourceLookingUpResult resourceIsKnown(int resource, DanteNode searchSender){
-        
+
         // If searches processing time is computed by exponential
         // distribution, we need to known the number of all known resources.
         if(DanteConf.getPresentSimConf().procTimesByExpDis()){
@@ -381,7 +384,7 @@ public class DanteNode extends Node {
             totalKnownResources += resources.numberOfRes();
             if(resources.containsResource(resource))
                 nodeWhereResIs = this;
-            
+
             // Checking neighbors
             DanteNode[] allNeighbors = (DanteNode[])neighbors.toArray(new DanteNode[0]);
             for(int neighIndex = 0; neighIndex < allNeighbors.length; neighIndex++){
@@ -401,23 +404,52 @@ public class DanteNode extends Node {
         int totalCheckedResources = 0;
         DanteNode nodeWhereResIs = null;
         
+        // Checking resources
         if(resources.containsResource(resource)){
             totalCheckedResources = resources.numberOfRes() / 2;
             nodeWhereResIs = this;
         } else {
             totalCheckedResources = resources.numberOfRes();
-        }       
-        
-        // Checking neighbors
+        }
+
+        // Checking extra resources
+        if (DanteConf.getPresentSimConf().onlineReplication() && nodeWhereResIs == null){
+        	
+			if (resources.containsExtraResource(resource))
+			{
+				totalCheckedResources += resources.numberOfExtraRes() / 2;
+				nodeWhereResIs = this;
+			} else {
+				totalCheckedResources += resources.numberOfExtraRes();
+			}
+
+        }
+
+        // Checking neighbors resources
         DanteNode[] allNeighbors = (DanteNode[])neighbors.toArray(new DanteNode[0]);
         for(int neighIndex = 0; neighIndex < allNeighbors.length && nodeWhereResIs == null; neighIndex++){            
             if(allNeighbors[neighIndex].getResources().containsResource(resource)){
                 totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfRes() / 2;
                 nodeWhereResIs = allNeighbors[neighIndex];
+
             } else {
                 totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfRes();                
-            }            
-        }      
+            }
+        }
+
+		// Checking neighbors extra resources
+        if (DanteConf.getPresentSimConf().onlineReplication() && nodeWhereResIs == null){
+
+			for(int neighIndex = 0; neighIndex < allNeighbors.length && nodeWhereResIs == null; neighIndex++){            
+				if(allNeighbors[neighIndex].getResources().containsExtraResource(resource)){
+					totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes() / 2;
+					nodeWhereResIs = allNeighbors[neighIndex];
+
+				} else {
+					totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes();                
+				}
+			}
+        }
         
         long timeInSearch = (capacity > 0) ? (long)Math.ceil(((double)totalCheckedResources)/capacity) : 0;
         timeInSearch = (timeInSearch > 0) ? timeInSearch : 1; 
@@ -468,7 +500,7 @@ public class DanteNode extends Node {
             startDisconnectProcess(node);
         }
         
-    }    
+    }
     
     // Method to start reconnection. Used when no global knowledge is available.
     public void reconnect(){
@@ -798,6 +830,7 @@ public class DanteNode extends Node {
                     ResourceFoundMessage resourceFoundMessage = new ResourceFoundMessage(this,
                                                                                          lookForResourceMessage.getSearchID(),
                                                                                          resourceLookingUpResult.getNodeResourceIs(),
+                                                                                         lookForResourceMessage.getResource(),
                                                                                          lookForResourceMessage.getNumberOfNodesTraversedInSearch(),
                                                                                          lookForResourceMessage.getSearchOriginGeneration());
                     
@@ -816,12 +849,48 @@ public class DanteNode extends Node {
 
                 // Updating busyUntil
                 busyUntil = Simulator.simulator().getSimulationTime() + 1;   
-                      
+                
                 if(resourceFoundMessage.getSearchOriginGeneration() == nodeGeneration)                    
                     searchesStats.searchFinished(resourceFoundMessage.getSearchID(),
                                                 Simulator.simulator().getSimulationTime(),
                                                 resourceFoundMessage.getNumberOfNodesTraversedInSearch(),
-                                                true);   
+                                                true);
+                
+                if(DanteConf.getPresentSimConf().onlineReplication()) {
+                	
+                	DanteNode whereResourseIs = resourceFoundMessage.getNodeResourceIsIn();
+                	int resource = resourceFoundMessage.getResource();
+                	int numberOfResourceToAdd = DanteConf.getPresentSimConf().orReplicationCount();
+                	double extraResChance = DanteConf.getPresentSimConf().orExtraResRate();
+                	
+                	// First replicate the founded resource
+                	this.resources.addExtraResource(resource);
+                	numberOfResourceToAdd--;
+                	
+                	// Now request for some more resources to replicate 
+                	if (numberOfResourceToAdd > 0) {
+                		
+                		int numberOfMainResToReplicate = 0;
+                		int numberOfExtraResToReplicate = 0;
+                		Random randomGenerator = new Random();
+
+                		while (numberOfResourceToAdd-- != 0) {
+                			// Chance to select a resource from extra resources
+                			if (randomGenerator.nextInt(100)+1 <= extraResChance*100)
+                				numberOfExtraResToReplicate++;
+                			else
+                				numberOfMainResToReplicate++;
+                		}
+                		
+                		ReplicationMessage replicationMessage = new ReplicationMessage(0, // Request
+                																this, // message origin
+                																numberOfMainResToReplicate, numberOfExtraResToReplicate, 
+                																new SortedArrayList());
+                		
+                		busyUntil += timeToSendSomePacket;
+                		sendMessageToNode(busyUntil, whereResourseIs, replicationMessage);
+                	}
+                }
                 
                 // Programming TaskFinished event
                 Simulator.simulator().registerEvent(new NodeTaskFinishedEvent(busyUntil, this));
@@ -846,6 +915,75 @@ public class DanteNode extends Node {
                 Simulator.simulator().registerEvent(new NodeTaskFinishedEvent(busyUntil, this));
                 
                 break;
+                
+            case ProtocolMessage.REPLICATION_MESSAGE:
+            	
+            	ReplicationMessage replicationMessage = (ReplicationMessage) message;
+
+            	busyUntil = Simulator.simulator().getSimulationTime() + 1;
+
+            	// Check if the message is a request
+            	if (replicationMessage.getPacketType() == 0) {
+
+            		SortedArrayList resForReplication = new SortedArrayList();
+            		int numberOfMainResToReplicate = replicationMessage.getMainResourcesCount();
+            		int numberOfExtraResToReplicate = replicationMessage.getExtraResourcesCount();
+            		Random randomGenerator = new Random();
+            		int res = 0;
+
+            		while(numberOfMainResToReplicate-- != 0) {
+
+            			if(DanteConf.getPresentSimConf().resReplIsUniform()) {
+
+            				int max = this.resources.getMaxRes();
+            				int min = this.resources.getMinRes();
+            				long range = (long)max - (long)min + 1;
+            				// compute a fraction of the range, 0 <= frac < range
+            				long fraction = (long)(range * randomGenerator.nextDouble());
+            				res = (int)(fraction + min);
+
+            			} else {
+
+            				res = this.resources.getResource(randomGenerator.nextInt(this.resources.resources.size()));
+            			}
+
+            			resForReplication.add(res);
+            		}	
+            		
+            		if (this.resources.extraResources.size() != 0) {
+
+            			while(numberOfExtraResToReplicate-- != 0) {
+
+            				res = this.resources.getExtraResource(randomGenerator.nextInt(this.resources.extraResources.size()));
+            				resForReplication.add(res);
+            			}	
+            		}
+
+
+            		ReplicationMessage replicationMessageResponse = new ReplicationMessage(1, // Response
+            																		this, // message origin
+            																		replicationMessage.getMainResourcesCount(), 
+            																		replicationMessage.getExtraResourcesCount(),
+            																		resForReplication);
+
+            		busyUntil += timeToSendSomePacket;
+            		sendMessageToNode(busyUntil, replicationMessage.getMessageOrigin(), replicationMessageResponse);
+
+            	} else { // if message type is a response
+
+            		SortedArrayList allRes = replicationMessage.getResources();
+
+            		Iterator iterator = allRes.iterator();
+            		while (iterator.hasNext()){
+            			this.resources.addExtraResource((Integer)iterator.next());
+            		}
+
+            	}
+            	
+            	// Programming TaskFinished event
+                Simulator.simulator().registerEvent(new NodeTaskFinishedEvent(busyUntil, this));
+                
+            	break;
                 
             case ProtocolMessage.LOOK_FOR_NODES:
                 

@@ -42,6 +42,7 @@ public abstract class ProtocolMessage {
     public final static short LOOK_FOR_RESOURCE = 6;
     public final static short RESOURCE_FOUND = 7;
     public final static short RESOURCE_NOT_FOUND = 8;
+    public final static short REPLICATION_MESSAGE = 9;    
     
     protected short messageType = 0;
     

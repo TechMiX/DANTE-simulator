@@ -100,6 +100,7 @@ public class NodeSearchesStats {
     private int receivedRESOURCE_NOT_FOUNDs = 0;
     private int receivedLOOK_FOR_NODEs = 0;
     private int receivedNODES_FOUNDs = 0;
+    private int receivedKNOWLEDGE_PACKAGEs = 0;
     
     private int lastSearchTTL = -1; // Needed by the adaptable searches TTL estimator. 
     
@@ -160,6 +161,9 @@ public class NodeSearchesStats {
                 break;
             case ProtocolMessage.NODES_FOUND:
                 receivedNODES_FOUNDs++;
+                break;
+            case ProtocolMessage.REPLICATION_MESSAGE:
+                receivedKNOWLEDGE_PACKAGEs++;
                 break;
             default:
                 throw new Error(thisNode.id() + ": Unknown message type???");
@@ -419,7 +423,9 @@ public class NodeSearchesStats {
     public int counterOfNODES_FOUNDsReceived(){
         return receivedNODES_FOUNDs;
     }
-
+    public int counterOfKNOWLEDGE_PACKAGEsReceived(){
+    	return receivedKNOWLEDGE_PACKAGEs;
+    }
     class ActiveSearchData {
         
         private long startingTime = 0;

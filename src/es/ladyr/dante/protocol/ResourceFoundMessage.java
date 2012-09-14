@@ -38,13 +38,15 @@ public class ResourceFoundMessage extends ProtocolMessage {
     protected DanteNode nodeResourceIsIn = null;
     protected int searchOriginGeneration = -1;
     protected int numberOfNodesTraversedInSearch;
+    protected int resource;
     
-    public ResourceFoundMessage(DanteNode sender, int searchID, DanteNode nodeResourceIsIn, int numberOfNodesTraversedInSearch, int searchOriginGeneration){
+    public ResourceFoundMessage(DanteNode sender, int searchID, DanteNode nodeResourceIsIn, int resource, int numberOfNodesTraversedInSearch, int searchOriginGeneration){
         this.sender = sender;
         this.searchID = searchID;
         this.nodeResourceIsIn = nodeResourceIsIn;
         this.searchOriginGeneration = searchOriginGeneration;
         this.numberOfNodesTraversedInSearch = numberOfNodesTraversedInSearch;
+        this.resource = resource;
         messageType = RESOURCE_FOUND;
     }
     
@@ -58,6 +60,10 @@ public class ResourceFoundMessage extends ProtocolMessage {
     
     public DanteNode getNodeResourceIsIn(){
         return nodeResourceIsIn;
+    }
+    
+    public int getResource(){
+        return resource;
     }
     
     public int getNumberOfNodesTraversedInSearch(){

@@ -17,7 +17,7 @@ NetBeParanoid = FALSE
 ###########################
 
 ## Initial Topology
-InitialTopologyGenerator = es.ladyr.dante.topologyGenerator.RandomTopologyGenerator
+InitialTopologyGenerator = es.ladyr.dante.topologyGenerator.ProportionalTopologyGenerator
 
 ## At each reconnection, a list of peer candidates must be collected. This flag
 # sets if the candidates are collected by a message following a random walk. If
@@ -37,7 +37,7 @@ ResourceSearchesTTLEstimator = es.ladyr.dante.node.ttl.FixedTTLStimator
 ResourcesByNode = 100
 
 # Resources popularity is uniform? (if not, is zipf)
-ResourcesPopularityIsUniform = TRUE
+ResourcesPopularityIsUniform = FALSE
 
 # Resource popularity parameters (used if resources popularity not 
 # uniform, that is, Zipf)
@@ -56,6 +56,12 @@ UniformReplicationRate = 1
 ResourcesReplicationTau = 1.5
 ResourcesReplicationCutoff = 20000
 
+## Online Replication
+# Nodes replicate one or more resources when they found a resource.
+# Extra resources are the resources that were replicated from another node.
+OnlineReplication = TRUE
+ReplicationCount = 5
+ExtraResourceReplicationRate = 0.3
 
 ## Nodes
 # Nodes configurations, separated by ','. Each configuration has three 
@@ -70,7 +76,8 @@ ResourcesReplicationCutoff = 20000
 # The sum of all a's is the total number of nodes in the system
 #> NodesNumbersCapacitiesAndBandwidths = [10|1000|100],[490|100|10],[3000|10|1],[4500|1|0.1],[2000|0.1|0.01]
 
-NodesNumbersCapacitiesAndBandwidths = [100|10|10]
+#NodesNumbersCapacitiesAndBandwidths = [2600|10|10],[2400|20|20]
+NodesNumbersCapacitiesAndBandwidths = [60|10|100],[40|20|200]
 
 # Searches processing time is computed by exp distribution (mean=resourcesKnown/capacity)
 # If not, processing time is computed as resourcesChecked/capacity.
@@ -218,7 +225,7 @@ DigestedLogIntervalLength = 60000000
 SimulationDuration = 108000000
 # Searches started before this moment will not be used for statistics. They
 # will only appear as 'IGNORED' in stats file. Ignored if < 0.
-IgnoreBefore = 18000000
+IgnoreBefore = 180000
 # Searches started beyond this point will be ignored for statistics. Besides,
 # when all simulations started before this poing are finished, the simulations
 # is assumed to be finished and so it is stopped (whatever the

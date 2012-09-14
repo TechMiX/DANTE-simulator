@@ -23,7 +23,7 @@
  * Phone: +34 91 488 8107; Fax: +34 91 +34 91 664 7494
  * Postal address: Desp. 121, Departamental II,
  *                 Universidad Rey Juan Carlos
- *                 C/Tulipán s/n, 28933, Móstoles, Spain 
+ *                 C/Tulipan s/n, 28933, Mostoles, Spain 
  *       
  */
 
@@ -31,6 +31,7 @@ package es.ladyr.dante.node;
 
 import es.ladyr.dante.run.DanteConf;
 import es.ladyr.util.dataStructs.SortedArrayList;
+import java.util.Random;
 
 public class Resources {
     
@@ -67,7 +68,9 @@ public class Resources {
     }
     
     protected int minRes = -1;
-    protected int maxRes = -1;
+	protected int maxRes = -1;
+    
+    protected SortedArrayList extraResources = null;
     protected SortedArrayList resources = null;
     
     public Resources(int minRes, int maxRes){
@@ -84,7 +87,10 @@ public class Resources {
         this.minRes = minRes;
         this.maxRes = maxRes;
         
+        if(DanteConf.getPresentSimConf().onlineReplication())
+			extraResources = new SortedArrayList();
     }
+   
     
     public Resources(){
 
@@ -92,6 +98,8 @@ public class Resources {
             throw new Error("When resource replication is uniform, resources min and max must be passed as param");
         
         resources = new SortedArrayList();
+        if(DanteConf.getPresentSimConf().onlineReplication())
+			extraResources = new SortedArrayList();
         
     }
     
@@ -106,12 +114,40 @@ public class Resources {
         
     }
     
+    public boolean addExtraResource(int res){
+        return extraResources.add(new Integer(res));
+    }
+    
     public int numberOfRes(){        
         return(resources != null ? resources.size() : (maxRes - minRes + 1));        
+    }
+    
+    public int numberOfExtraRes(){        
+        return(extraResources != null ? extraResources.size() : (maxRes - minRes + 1));        
     }
     
     public boolean containsResource(int res){
         return(resources != null ? resources.contains(new Integer(res)) : ((res >= minRes)&&(res <= maxRes)) );
     }
+    
+    public boolean containsExtraResource(int res){
+        return extraResources.contains(new Integer(res));
+    }
+    
+    public int getResource(int index){
+        return(resources != null ? (Integer)this.resources.get(index) : index+1);
+    }
+    
+    public int getExtraResource(int index){
+    	return(extraResources != null ? (Integer)this.extraResources.get(index) : index+1);
+    }
+    
+    public int getMinRes() {
+		return minRes;
+	}
+
+	public int getMaxRes() {
+		return maxRes;
+	}
 
 }

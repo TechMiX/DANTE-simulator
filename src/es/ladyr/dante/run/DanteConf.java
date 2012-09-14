@@ -114,6 +114,9 @@ public class DanteConf {
     private final static String NEW_CONNS_FILTER = "NewConnectionsFilter";
     private final static String SEARCHES_TTL_EST = "ResourceSearchesTTLEstimator";
     private final static String NODE_SEARCHES_BY_WALK = "NodeSearchByWalkers";
+    private final static String ONLINE_REPLICATION = "OnlineReplication";
+    private final static String ONLINE_REPLICATION_REPLICATION_COUNT = "ReplicationCount";
+    private final static String ONLINE_REPLICATION_EXTRA_RATE = "ExtraResourceReplicationRate";
     private final static String CONFIG_STORE_FILE_NAME = "ConfigStoreFileName";
     
     public DanteConf(Params params){
@@ -173,6 +176,11 @@ public class DanteConf {
         beParanoid = params.getBooleanParam(BE_PARANOID); // 49
         pajekDir = params.getParam(PAJEK_DIR); // 50        
         nodeSeaByWalk = params.getBooleanParam(NODE_SEARCHES_BY_WALK); // 51
+        onlineReplication = params.getBooleanParam(ONLINE_REPLICATION);
+        orReplicationCount = params.getIntParam(ONLINE_REPLICATION_REPLICATION_COUNT);
+        if (orReplicationCount < 1)
+        	throw new Error("Resource replication count can't be less than one");
+        orExtraResRate = params.getDoubleParam(ONLINE_REPLICATION_EXTRA_RATE);
         configStoreFileName = params.getParam(CONFIG_STORE_FILE_NAME);
         
         // Components
@@ -539,6 +547,25 @@ public class DanteConf {
     private boolean nodeSeaByWalk = false;
     public boolean nodeSeaByWalk(){
         return nodeSeaByWalk;
+    }
+    
+    // Nodes perform online replication?
+    private boolean onlineReplication = false;
+    public boolean onlineReplication(){
+        return onlineReplication;
+    }
+    
+    // Number of resources to be replicated
+    private int orReplicationCount = -1;
+    public int orReplicationCount(){
+    	
+        return orReplicationCount;
+    }
+    
+    // Extra resources replication rate
+    private double orExtraResRate = -1;
+    public double orExtraResRate(){
+        return orExtraResRate;
     }
     
     // File to store the experiment simulation (it helps later analysis)
