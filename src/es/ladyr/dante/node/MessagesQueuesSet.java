@@ -187,7 +187,7 @@ public class MessagesQueuesSet {
                                
                 break;
             
-            // RESOURCE_FOUND, RESOURCE_NOT_FOUND, KNOWLEDGE_PACKAGE or NODES_FOUND message
+            // RESOURCE_FOUND, RESOURCE_NOT_FOUND, REPLICATION_MESSAGE or NODES_FOUND message
             case ProtocolMessage.RESOURCE_FOUND:
             case ProtocolMessage.RESOURCE_NOT_FOUND:
             case ProtocolMessage.REPLICATION_MESSAGE:
