@@ -117,29 +117,41 @@ public class Resources {
     public boolean addExtraResource(int res){
         return extraResources.add(new Integer(res));
     }
-    
+
     public int numberOfRes(){        
-        return(resources != null ? resources.size() : (maxRes - minRes + 1));        
+    	return(resources != null ? resources.size() : (maxRes - minRes + 1));        
     }
-    
-    public int numberOfExtraRes(){        
-        return(extraResources != null ? extraResources.size() : (maxRes - minRes + 1));        
+
+    public int numberOfExtraRes(){
+
+    	if (extraResources != null)
+    		return extraResources.size();
+    	else
+    		throw new Error("No extra resources available. OnlineReplication must be TRUE");
     }
-    
+
     public boolean containsResource(int res){
-        return(resources != null ? resources.contains(new Integer(res)) : ((res >= minRes)&&(res <= maxRes)) );
+    	return(resources != null ? resources.contains(new Integer(res)) : ((res >= minRes)&&(res <= maxRes)) );
     }
-    
+
     public boolean containsExtraResource(int res){
-        return extraResources.contains(new Integer(res));
+
+    	if (extraResources != null)
+    		return extraResources.contains(new Integer(res));
+    	else
+    		throw new Error("No extra resources available. OnlineReplication must be TRUE");
     }
-    
+
     public int getResource(int index){
-        return(resources != null ? (Integer)this.resources.get(index) : index+1);
+    	return(resources != null ? (Integer)this.resources.get(index) : (index+1 < numberOfRes() ? minRes+index : -1));
     }
-    
+
     public int getExtraResource(int index){
-    	return(extraResources != null ? (Integer)this.extraResources.get(index) : index+1);
+
+    	if (extraResources != null)
+    		return (Integer)this.extraResources.get(index);
+    	else
+    		throw new Error("No extra resources available. OnlineReplication must be TRUE");
     }
 
     public int getMinRes() {

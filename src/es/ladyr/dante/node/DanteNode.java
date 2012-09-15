@@ -933,28 +933,15 @@ public class DanteNode extends Node {
 
             		while(numberOfMainResToReplicate-- != 0) {
 
-            			if(DanteConf.getPresentSimConf().resReplIsUniform()) {
-
-            				int max = this.resources.getMaxRes();
-            				int min = this.resources.getMinRes();
-            				long range = (long)max - (long)min + 1;
-            				// compute a fraction of the range, 0 <= frac < range
-            				long fraction = (long)(range * randomGenerator.nextDouble());
-            				res = (int)(fraction + min);
-
-            			} else {
-
-            				res = this.resources.getResource(randomGenerator.nextInt(this.resources.resources.size()));
-            			}
-
+            			res = this.resources.getResource(randomGenerator.nextInt(this.resources.numberOfRes()));
             			resForReplication.add(res);
             		}	
-            		
-            		if (this.resources.extraResources.size() != 0) {
+
+            		if (this.resources.numberOfExtraRes() != 0) {
 
             			while(numberOfExtraResToReplicate-- != 0) {
 
-            				res = this.resources.getExtraResource(randomGenerator.nextInt(this.resources.extraResources.size()));
+            				res = this.resources.getExtraResource(randomGenerator.nextInt(this.resources.numberOfExtraRes()));
             				resForReplication.add(res);
             			}	
             		}
