@@ -378,21 +378,37 @@ public class DanteNode extends Node {
         // distribution, we need to known the number of all known resources.
         if(DanteConf.getPresentSimConf().procTimesByExpDis()){
             
-            int totalKnownResources = 0;
-            DanteNode nodeWhereResIs = null;
-            
-            totalKnownResources += resources.numberOfRes();
-            if(resources.containsResource(resource))
-                nodeWhereResIs = this;
+        	int totalKnownResources = 0;
+        	DanteNode nodeWhereResIs = null;
 
-            // Checking neighbors
-            DanteNode[] allNeighbors = (DanteNode[])neighbors.toArray(new DanteNode[0]);
-            for(int neighIndex = 0; neighIndex < allNeighbors.length; neighIndex++){
-                totalKnownResources += allNeighbors[neighIndex].getResources().numberOfRes();
-                if(allNeighbors[neighIndex].getResources().containsResource(resource))
-                    nodeWhereResIs = allNeighbors[neighIndex];
-            }
-            
+        	totalKnownResources += resources.numberOfRes();
+        	if(resources.containsResource(resource))
+        		nodeWhereResIs = this;
+
+        	// Checking neighbors
+        	DanteNode[] allNeighbors = (DanteNode[])neighbors.toArray(new DanteNode[0]);
+        	for(int neighIndex = 0; neighIndex < allNeighbors.length; neighIndex++){
+        		totalKnownResources += allNeighbors[neighIndex].getResources().numberOfRes();
+        		if(nodeWhereResIs == null && allNeighbors[neighIndex].getResources().containsResource(resource))
+        			nodeWhereResIs = allNeighbors[neighIndex];
+        	}
+
+
+        	if (DanteConf.getPresentSimConf().onlineReplication()){
+
+        		// Checking extra resources
+        		totalKnownResources += resources.numberOfExtraRes();
+        		if (resources.containsExtraResource(resource))
+        			nodeWhereResIs = this;
+
+        		// Checking neighbors extra resources
+        		for(int neighIndex = 0; neighIndex < allNeighbors.length && nodeWhereResIs == null; neighIndex++){
+        			totalKnownResources += allNeighbors[neighIndex].getResources().numberOfExtraRes();
+        			if(nodeWhereResIs == null && allNeighbors[neighIndex].getResources().containsExtraResource(resource))
+        				nodeWhereResIs = allNeighbors[neighIndex];
+        		}
+        	}
+
             long timeInSearch = (capacity > 0) ? ExponentialDistribution.nextLongForMean(totalKnownResources/capacity) : 0;
             timeInSearch = (timeInSearch > 0) ? timeInSearch : 1; 
             

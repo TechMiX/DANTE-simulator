@@ -81,7 +81,7 @@ NodesNumbersCapacitiesAndBandwidths = [60|10|100],[40|20|200]
 
 # Searches processing time is computed by exp distribution (mean=resourcesKnown/capacity)
 # If not, processing time is computed as resourcesChecked/capacity.
-ProcTimeByExpDistr = FALSE
+ProcTimeByExpDistr = TRUE
 
 # Probability node is active at start time. If = 1, then all nodes will be
 # active (that is, will be present in the network) when the simulation is
