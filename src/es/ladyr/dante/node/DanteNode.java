@@ -414,14 +414,14 @@ public class DanteNode extends Node {
 
         // Checking extra resources
         if (DanteConf.getPresentSimConf().onlineReplication() && nodeWhereResIs == null){
-        	
-			if (resources.containsExtraResource(resource))
-			{
-				totalCheckedResources += resources.numberOfExtraRes() / 2;
-				nodeWhereResIs = this;
-			} else {
-				totalCheckedResources += resources.numberOfExtraRes();
-			}
+
+        	if (resources.containsExtraResource(resource))
+        	{
+        		totalCheckedResources += resources.numberOfExtraRes() / 2;
+        		nodeWhereResIs = this;
+        	} else {
+        		totalCheckedResources += resources.numberOfExtraRes();
+        	}
 
         }
 
@@ -437,20 +437,20 @@ public class DanteNode extends Node {
             }
         }
 
-		// Checking neighbors extra resources
+        // Checking neighbors extra resources
         if (DanteConf.getPresentSimConf().onlineReplication() && nodeWhereResIs == null){
 
-			for(int neighIndex = 0; neighIndex < allNeighbors.length && nodeWhereResIs == null; neighIndex++){            
-				if(allNeighbors[neighIndex].getResources().containsExtraResource(resource)){
-					totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes() / 2;
-					nodeWhereResIs = allNeighbors[neighIndex];
+        	for(int neighIndex = 0; neighIndex < allNeighbors.length && nodeWhereResIs == null; neighIndex++){            
+        		if(allNeighbors[neighIndex].getResources().containsExtraResource(resource)){
+        			totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes() / 2;
+        			nodeWhereResIs = allNeighbors[neighIndex];
 
-				} else {
-					totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes();                
-				}
-			}
+        		} else {
+        			totalCheckedResources += allNeighbors[neighIndex].getResources().numberOfExtraRes();                
+        		}
+        	}
         }
-        
+
         long timeInSearch = (capacity > 0) ? (long)Math.ceil(((double)totalCheckedResources)/capacity) : 0;
         timeInSearch = (timeInSearch > 0) ? timeInSearch : 1; 
         

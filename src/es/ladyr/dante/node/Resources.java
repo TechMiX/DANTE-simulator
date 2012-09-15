@@ -54,7 +54,7 @@ public class Resources {
     public static void computeDifResInSystem(){
         
         if(DanteConf.getPresentSimConf().resReplIsUniform())
-            difResInSystem = (int)(DanteConf.getPresentSimConf().resByNode() * 100 / DanteConf.getPresentSimConf().unifReplRate());
+            difResInSystem = (int)(DanteConf.getPresentSimConf().resByNode() / DanteConf.getPresentSimConf().unifReplRate());
         else 
             difResInSystem = resInSystem.size();
     }
@@ -66,13 +66,13 @@ public class Resources {
         
         return difResInSystem;
     }
-    
+
     protected int minRes = -1;
-	protected int maxRes = -1;
-    
+    protected int maxRes = -1;
+
     protected SortedArrayList extraResources = null;
     protected SortedArrayList resources = null;
-    
+
     public Resources(int minRes, int maxRes){
         
         if(!DanteConf.getPresentSimConf().resReplIsUniform())
@@ -82,13 +82,13 @@ public class Resources {
             throw new Error("Min resource " + minRes + " is greater than max resource");
         
         if((maxRes - minRes + 1) != DanteConf.getPresentSimConf().resByNode())
-            throw new Error("The number of resources " + (maxRes - minRes + 1) + " differs of the one configured " + DanteConf.getPresentSimConf().resByNode());
-        
+        	throw new Error("The number of resources " + (maxRes - minRes + 1) + " differs of the one configured " + DanteConf.getPresentSimConf().resByNode());
+
         this.minRes = minRes;
         this.maxRes = maxRes;
-        
+
         if(DanteConf.getPresentSimConf().onlineReplication())
-			extraResources = new SortedArrayList();
+        	extraResources = new SortedArrayList();
     }
    
     
@@ -96,11 +96,11 @@ public class Resources {
 
         if(DanteConf.getPresentSimConf().resReplIsUniform())
             throw new Error("When resource replication is uniform, resources min and max must be passed as param");
-        
+
         resources = new SortedArrayList();
         if(DanteConf.getPresentSimConf().onlineReplication())
-			extraResources = new SortedArrayList();
-        
+        	extraResources = new SortedArrayList();
+
     }
     
     public boolean addResource(int res){
@@ -141,13 +141,13 @@ public class Resources {
     public int getExtraResource(int index){
     	return(extraResources != null ? (Integer)this.extraResources.get(index) : index+1);
     }
-    
-    public int getMinRes() {
-		return minRes;
-	}
 
-	public int getMaxRes() {
-		return maxRes;
-	}
+    public int getMinRes() {
+    	return minRes;
+    }
+
+    public int getMaxRes() {
+    	return maxRes;
+    }
 
 }

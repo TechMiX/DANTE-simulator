@@ -46,10 +46,10 @@ ResourcesPopularityCutoff = 20000
 
 # Resources replication  is uniform? (if not, is Zipf)
 ResourcesReplicationIsUniform = TRUE
-# Rate of resources replication (%), (how many nodes host each resource).
+# Rate of resources replication, (how many nodes host each resource).
 # Ignored if ResourcesReplicationIsUniform = false
 #> UniformReplicationRate = 0.01;0.05;0.1
-UniformReplicationRate = 1
+UniformReplicationRate = 0.01
 
 # Resource replication parameters (used if resources replication is not 
 # uniform, that is, is Zipf)

@@ -212,7 +212,7 @@ public class DanteSimRunner {
             
             SortedArrayList allNodesCopy = new SortedArrayList(DanteNode.allNodesInSystem());
             
-            int nodesThatHoldEachResource = (int)(allNodesCopy.size() * DanteConf.getPresentSimConf().unifReplRate() / 100);
+            int nodesThatHoldEachResource = (int)(allNodesCopy.size() * DanteConf.getPresentSimConf().unifReplRate());
             
             if(nodesThatHoldEachResource == 0)
                 throw new Error("Review replication rate of resources, maybe is too low (Number of nodes to hold each resource results 0");
