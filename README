@@ -6,6 +6,9 @@ Here is included the simulation software used to test DANTE. DANTE is a proposal
 of a self-adapting P2P system, already introduced in some research papers (*).
 All the results shown in those papers were obtained using this simulator.
 
+These features were added later:
+ Online replication
+
 This software is released under the GPL v2.0 distribution license (see the
 LICENSE file).
 
@@ -14,8 +17,6 @@ More info: https://sites.google.com/site/luisroderomerinowebpage/research#thesis
 Contents:
 src/
  Java source files.
-bin/
- Compiled software.
 dante_all_experiments_configuration
  Simulations configuration file.
 LICENSE
