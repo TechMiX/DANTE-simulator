@@ -60,6 +60,7 @@ ResourcesReplicationCutoff = 20000
 # Nodes replicate one or more resources when they found a resource.
 # Extra resources are the resources that were replicated from another node.
 OnlineReplication = FALSE;TRUE
+ReplicateOnTraversedNodes = TRUE
 ReplicationCount = 5
 ExtraResourceReplicationRate = 0.3
 
@@ -81,7 +82,7 @@ NodesNumbersCapacitiesAndBandwidths = [60|10|100],[40|20|200]
 
 # Searches processing time is computed by exp distribution (mean=resourcesKnown/capacity)
 # If not, processing time is computed as resourcesChecked/capacity.
-ProcTimeByExpDistr = TRUE
+ProcTimeByExpDistr = FALSE
 
 # Probability node is active at start time. If = 1, then all nodes will be
 # active (that is, will be present in the network) when the simulation is

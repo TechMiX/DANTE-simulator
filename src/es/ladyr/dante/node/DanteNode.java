@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import com.sun.org.apache.xpath.internal.FoundIndex;
+
 import es.ladyr.dante.externalEvents.EventForwarder;
 import es.ladyr.dante.monitoring.searchesStats.NodeSearchesStats;
 import es.ladyr.dante.protocol.AcceptMessage;
@@ -797,8 +799,18 @@ public class DanteNode extends Node {
                 busyUntil = Simulator.simulator().getSimulationTime() + processTime + DanteConf.getPresentSimConf().fixedTimeCost();    
                 
                 // Adding this node to the counter of traversed nodes
-                lookForResourceMessage.increaseCounterOfTraversedNodes();
-                    
+                if (DanteConf.getPresentSimConf().orReplicateOnTraversedNode()){
+
+                	if ((lookForResourceMessage.getNumberOfNodesTraversedInSearch()+1) % 2 == 0)
+                		lookForResourceMessage.increaseCounterOfTraversedNodes(this);
+                	else
+                		lookForResourceMessage.increaseCounterOfTraversedNodes();
+
+                } else {
+
+                	lookForResourceMessage.increaseCounterOfTraversedNodes();
+                }
+
                 // Checking if resource is known locally
                 if(resourceLookingUpResult.getNodeResourceIs() == null){           
                     
@@ -847,6 +859,7 @@ public class DanteNode extends Node {
                                                                                          lookForResourceMessage.getSearchID(),
                                                                                          resourceLookingUpResult.getNodeResourceIs(),
                                                                                          lookForResourceMessage.getResource(),
+                                                                                         lookForResourceMessage.getTraversedNodes(),
                                                                                          lookForResourceMessage.getNumberOfNodesTraversedInSearch(),
                                                                                          lookForResourceMessage.getSearchOriginGeneration());
                     
@@ -898,6 +911,7 @@ public class DanteNode extends Node {
                 				numberOfMainResToReplicate++;
                 		}
                 		
+                		// Sending a replicating message request to the node where founded resource is
                 		ReplicationMessage replicationMessage = new ReplicationMessage(0, // Request
                 																this, // message origin
                 																numberOfMainResToReplicate, numberOfExtraResToReplicate, 
@@ -905,6 +919,49 @@ public class DanteNode extends Node {
                 		
                 		busyUntil += timeToSendSomePacket;
                 		sendMessageToNode(busyUntil, whereResourseIs, replicationMessage);
+
+                		// Now replicate some resources from this node to the traversed nodes 
+                		if (DanteConf.getPresentSimConf().orReplicateOnTraversedNode()){
+
+                			SortedArrayList traversedNodes = resourceFoundMessage.getTraversedNodes();
+
+                			if (traversedNodes.size() > 0) {
+
+                				SortedArrayList resForReplication = new SortedArrayList();
+                				int res = -1;
+                				while(numberOfMainResToReplicate-- != 0) {
+
+                					res = this.resources.getResource(randomGenerator.nextInt(this.resources.numberOfRes()));
+                					resForReplication.add(res);
+                				}	
+
+                				if (this.resources.numberOfExtraRes() != 0) {
+
+                					while(numberOfExtraResToReplicate-- != 0) {
+
+                						res = this.resources.getExtraResource(randomGenerator.nextInt(this.resources.numberOfExtraRes()));
+                						resForReplication.add(res);
+                					}	
+                				}
+
+                        		Iterator iterator = traversedNodes.iterator();
+                        		while (iterator.hasNext()){
+                        			
+                        			ReplicationMessage replicationMessageResponse = new ReplicationMessage(1, // Response
+																										this, // message origin
+																										numberOfMainResToReplicate, 
+																										numberOfExtraResToReplicate,
+																										resForReplication);
+
+                        			busyUntil += timeToSendSomePacket;
+                        			
+                        			sendMessageToNode(busyUntil, (DanteNode)iterator.next(), replicationMessageResponse);
+
+                        		}
+
+                			}
+
+                		}
                 	}
                 }
                 

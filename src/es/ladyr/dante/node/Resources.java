@@ -124,7 +124,7 @@ public class Resources {
 
     public int numberOfExtraRes(){
 
-    	if (extraResources != null)
+    	if (extraResources == null)
     		throw new Error("No extra resources available. OnlineReplication must be TRUE");
 
     	return extraResources.size();

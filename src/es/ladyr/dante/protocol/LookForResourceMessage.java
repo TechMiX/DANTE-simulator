@@ -30,6 +30,7 @@
 package es.ladyr.dante.protocol;
 
 import es.ladyr.dante.node.DanteNode;
+import es.ladyr.util.dataStructs.SortedArrayList;
 
 
 public class LookForResourceMessage extends ProtocolMessage {
@@ -40,6 +41,7 @@ public class LookForResourceMessage extends ProtocolMessage {
     protected DanteNode searchOrigin = null;
     protected int searchOriginGeneration = -1;
     protected int numberOfNodesTraversedInSearch;
+    protected SortedArrayList traversedNodes;
     
     public LookForResourceMessage(DanteNode sender, int searchID, int resource, int ttl, DanteNode searchOrigin){
         this.sender = sender;
@@ -50,9 +52,14 @@ public class LookForResourceMessage extends ProtocolMessage {
         this.searchOriginGeneration = searchOrigin.nodeGeneration();
         messageType = LOOK_FOR_RESOURCE;
         numberOfNodesTraversedInSearch = 0;
+        traversedNodes = new SortedArrayList();
     }
     
-    public int getSearchID(){
+    public SortedArrayList getTraversedNodes() {
+		return traversedNodes;
+	}
+
+	public int getSearchID(){
         return searchID;
     }
     
@@ -77,6 +84,11 @@ public class LookForResourceMessage extends ProtocolMessage {
     }
     
     public void increaseCounterOfTraversedNodes(){
+        numberOfNodesTraversedInSearch++;
+    }
+    
+    public void increaseCounterOfTraversedNodes(DanteNode node){
+    	traversedNodes.add(node);
         numberOfNodesTraversedInSearch++;
     }
 

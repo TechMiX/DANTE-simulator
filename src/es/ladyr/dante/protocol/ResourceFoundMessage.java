@@ -30,6 +30,7 @@
 package es.ladyr.dante.protocol;
 
 import es.ladyr.dante.node.DanteNode;
+import es.ladyr.util.dataStructs.SortedArrayList;
 
 
 public class ResourceFoundMessage extends ProtocolMessage {
@@ -39,17 +40,20 @@ public class ResourceFoundMessage extends ProtocolMessage {
     protected int searchOriginGeneration = -1;
     protected int numberOfNodesTraversedInSearch;
     protected int resource;
-    
-    public ResourceFoundMessage(DanteNode sender, int searchID, DanteNode nodeResourceIsIn, int resource, int numberOfNodesTraversedInSearch, int searchOriginGeneration){
-        this.sender = sender;
-        this.searchID = searchID;
-        this.nodeResourceIsIn = nodeResourceIsIn;
-        this.searchOriginGeneration = searchOriginGeneration;
-        this.numberOfNodesTraversedInSearch = numberOfNodesTraversedInSearch;
-        this.resource = resource;
-        messageType = RESOURCE_FOUND;
+    protected SortedArrayList traversedNodes;
+
+	public ResourceFoundMessage(DanteNode sender, int searchID, DanteNode nodeResourceIsIn, int resource, 
+    		SortedArrayList traversedNodes, int numberOfNodesTraversedInSearch, int searchOriginGeneration){
+    	this.sender = sender;
+    	this.searchID = searchID;
+    	this.nodeResourceIsIn = nodeResourceIsIn;
+    	this.searchOriginGeneration = searchOriginGeneration;
+    	this.numberOfNodesTraversedInSearch = numberOfNodesTraversedInSearch;
+    	this.resource = resource;
+    	this.traversedNodes = traversedNodes;
+    	messageType = RESOURCE_FOUND;
     }
-    
+
     public int getSearchID(){
         return searchID;
     }
@@ -68,5 +72,9 @@ public class ResourceFoundMessage extends ProtocolMessage {
     
     public int getNumberOfNodesTraversedInSearch(){
         return numberOfNodesTraversedInSearch;
+    }
+    
+    public SortedArrayList getTraversedNodes() {
+    	return traversedNodes;
     }
 }
