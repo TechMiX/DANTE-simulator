@@ -125,9 +125,10 @@ public class Resources {
     public int numberOfExtraRes(){
 
     	if (extraResources != null)
-    		return extraResources.size();
-    	else
     		throw new Error("No extra resources available. OnlineReplication must be TRUE");
+
+    	return extraResources.size();
+
     }
 
     public boolean containsResource(int res){
@@ -136,10 +137,11 @@ public class Resources {
 
     public boolean containsExtraResource(int res){
 
-    	if (extraResources != null)
-    		return extraResources.contains(new Integer(res));
-    	else
+    	if (extraResources == null)
     		throw new Error("No extra resources available. OnlineReplication must be TRUE");
+
+    	return extraResources.contains(new Integer(res));
+
     }
 
     public int getResource(int index){
@@ -148,10 +150,11 @@ public class Resources {
 
     public int getExtraResource(int index){
 
-    	if (extraResources != null)
-    		return (Integer)this.extraResources.get(index);
-    	else
+    	if (extraResources == null)
     		throw new Error("No extra resources available. OnlineReplication must be TRUE");
+
+    	return (Integer)this.extraResources.get(index);
+
     }
 
     public int getMinRes() {

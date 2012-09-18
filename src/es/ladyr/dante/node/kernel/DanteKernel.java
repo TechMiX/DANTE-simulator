@@ -41,7 +41,7 @@ public interface DanteKernel {
     // Computes, for a single node, the list of nodes it must connect to
     public List nodesToConnectTo(SortedArrayList candidates, DanteNode node);
     
-    // Computer, for a single node, the list of nodes it must connet to, using
+    // Computes, for a single node, the list of nodes it must connet to, using
     // global knowledge of nodes.
     public List nodesToConnectTo(DanteNode node);
     
