@@ -799,7 +799,7 @@ public class DanteNode extends Node {
                 busyUntil = Simulator.simulator().getSimulationTime() + processTime + DanteConf.getPresentSimConf().fixedTimeCost();    
                 
                 // Adding this node to the counter of traversed nodes
-                if (DanteConf.getPresentSimConf().orReplicateOnTraversedNode()){
+                if (DanteConf.getPresentSimConf().orPathReplication()){
 
                 	if ((lookForResourceMessage.getNumberOfNodesTraversedInSearch()+1) % 2 == 0)
                 		lookForResourceMessage.increaseCounterOfTraversedNodes(this);
@@ -892,7 +892,7 @@ public class DanteNode extends Node {
                 	int numberOfResourceToAdd = DanteConf.getPresentSimConf().orReplicationCount();
                 	double extraResChance = DanteConf.getPresentSimConf().orExtraResRate();
                 	
-                	// First replicate the founded resource
+                	// First replicate the founded resource on this node
                 	this.resources.addExtraResource(resource);
                 	numberOfResourceToAdd--;
                 	
@@ -920,8 +920,8 @@ public class DanteNode extends Node {
                 		busyUntil += timeToSendSomePacket;
                 		sendMessageToNode(busyUntil, whereResourseIs, replicationMessage);
 
-                		// Now replicate some resources from this node to the traversed nodes 
-                		if (DanteConf.getPresentSimConf().orReplicateOnTraversedNode()){
+                		// Now replicate some resources from this node on the traversed nodes 
+                		if (DanteConf.getPresentSimConf().orPathReplication()){
 
                 			SortedArrayList traversedNodes = resourceFoundMessage.getTraversedNodes();
 

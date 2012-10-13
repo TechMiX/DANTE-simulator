@@ -115,7 +115,7 @@ public class DanteConf {
     private final static String SEARCHES_TTL_EST = "ResourceSearchesTTLEstimator";
     private final static String NODE_SEARCHES_BY_WALK = "NodeSearchByWalkers";
     private final static String ONLINE_REPLICATION = "OnlineReplication";
-    private final static String ONLINE_REPLICATION_TRAVERSED_NODES = "ReplicateOnTraversedNodes";
+    private final static String ONLINE_REPLICATION_PATH = "PathReplication";
     private final static String ONLINE_REPLICATION_REPLICATION_COUNT = "ReplicationCount";
     private final static String ONLINE_REPLICATION_EXTRA_RATE = "ExtraResourceReplicationRate";
     private final static String CONFIG_STORE_FILE_NAME = "ConfigStoreFileName";
@@ -182,7 +182,7 @@ public class DanteConf {
         if (orReplicationCount < 1)
         	throw new Error("Resource replication count can't be less than one");
         orExtraResRate = params.getDoubleParam(ONLINE_REPLICATION_EXTRA_RATE);
-        orReplicateOnTraversedNode = params.getBooleanParam(ONLINE_REPLICATION_TRAVERSED_NODES);
+        orPathReplication = params.getBooleanParam(ONLINE_REPLICATION_PATH);
         configStoreFileName = params.getParam(CONFIG_STORE_FILE_NAME);
         
         // Components
@@ -570,9 +570,9 @@ public class DanteConf {
         return orExtraResRate;
     }
 
-    private boolean orReplicateOnTraversedNode = false;
-    public boolean orReplicateOnTraversedNode(){
-    	return orReplicateOnTraversedNode;
+    private boolean orPathReplication = false;
+    public boolean orPathReplication(){
+    	return orPathReplication;
     }
 
     // File to store the experiment simulation (it helps later analysis)
